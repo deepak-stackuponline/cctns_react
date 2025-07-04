@@ -16,9 +16,13 @@ import './BookDetailCard.css';
 
 function BookDetailCard() {
   const [open, setOpen] = useState('');
+
   const [modalOpen, setModalOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+
+
   const [cartItems, setCartItems] = useState([]);
+
   const location = useLocation();
   const book = location.state?.bookData;
 
@@ -42,6 +46,7 @@ function BookDetailCard() {
     setCartItems(prevItems => prevItems.concat(book));
 
 
+
     console.log(book);
     
     
@@ -56,7 +61,7 @@ function BookDetailCard() {
 
 
   const handleConfirm = () => {
-    console.log('Book rental confirmed:', book.title);
+    
     setModalOpen(false);
   };
 
@@ -304,7 +309,7 @@ function BookDetailCard() {
               <Col xs="12">
               <br />
                 <p className="text-muted text-center fw-bold">
-                  Are you sure you want to rent this book?{" "}
+                  Are you sure you want to rent this book?
                 </p>
               </Col>
             </Row>
@@ -345,14 +350,14 @@ function BookDetailCard() {
                   <CardBody>
                     <Row>
                       <Col xs="3">
-                        {item.image && (
+                       
                           <img 
                             src={item.image} 
                             alt={item.title}
                             style={{ width: '100%', height: '80px', objectFit: 'cover' }}
                             className="rounded"
                           />
-                        )}
+                        
                       </Col>
                       <Col xs="9">
                         <h6 className="fw-bold mb-1">{item.title}</h6>
