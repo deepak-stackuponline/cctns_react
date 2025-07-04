@@ -18,6 +18,8 @@ function BookDetailCard() {
   const [open, setOpen] = useState('');
 
   const [modalOpen, setModalOpen] = useState(false);
+
+
   const [cartOpen, setCartOpen] = useState(false);
 
 
@@ -308,9 +310,10 @@ function BookDetailCard() {
             <Row>
               <Col xs="12">
               <br />
-                <p className="text-muted text-center fw-bold">
-                  Are you sure you want to rent this book?
-                </p>
+             <h3 className="burning-text text-center">
+  Are you sure you want to rent this book?
+</h3>
+
               </Col>
             </Row>
           </Container>
@@ -351,12 +354,7 @@ function BookDetailCard() {
                     <Row>
                       <Col xs="3">
                        
-                          <img 
-                            src={item.image} 
-                            alt={item.title}
-                            style={{ width: '100%', height: '80px', objectFit: 'cover' }}
-                            className="rounded"
-                          />
+                          <img src={item.image} alt={item.title} style={{ width: '100%', height: '80px', objectFit: 'cover' }} className="rounded" />
                         
                       </Col>
                       <Col xs="9">

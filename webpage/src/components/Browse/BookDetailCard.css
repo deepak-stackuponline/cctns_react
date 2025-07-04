@@ -46,3 +46,21 @@
 .list-item-button:hover {
   background-color: #D3D3D3 !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+.burning-text {
+  font-weight: bolder;
+  color: red;
+  font-family: 'Nosifer', cursive;
+
+}
+
