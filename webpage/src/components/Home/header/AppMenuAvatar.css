@@ -1,0 +1,30 @@
+.avatar-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+ 
+  border-radius: 50%;
+  background-color: white; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.avatar-circle:hover {
+  background-color: #343a40; 
+}
+
+.avatar-initials {
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+}

@@ -1,0 +1,20 @@
+.menu-link {
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.menu-link:hover {
+  color: #1c2a01 !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.menu-link.active {
+  color: #000 !important;
+  text-shadow: 0.5px 0 0 currentColor, -0.5px 0 0 currentColor;
+}
+
+.menu-link.active:hover {
+  color: #000 !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
