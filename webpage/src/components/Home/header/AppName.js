@@ -9,6 +9,8 @@ function AppName() {
         <h1 className="app-name mb-0">Literary Ledger</h1>
    </div>
   );
+
+  
 }
 
 export default AppName;
