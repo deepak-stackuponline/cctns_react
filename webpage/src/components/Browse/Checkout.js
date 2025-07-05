@@ -31,7 +31,7 @@ function Checkout() {
       .email('Invalid email address')
       .required('Email is required'),
     phone: Yup.string()
-      .matches(/^[\+]?[1-9][\d]{0,15}$/, 'Phone number is not valid')
+      .matches(/^[+]?[1-9][\d]{0,15}$/, 'Phone number is not valid')
       .required('Phone number is required'),
     address: Yup.string()
       .min(5, 'Address must be at least 5 characters')

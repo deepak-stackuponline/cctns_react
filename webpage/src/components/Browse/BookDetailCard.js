@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Accordion, AccordionBody, AccordionHeader, AccordionItem,
   Container, Row, Col, ListGroup, ListGroupItem, Card, CardBody,
@@ -19,7 +19,6 @@ function BookDetailCard() {
   const { addToCart } = useCart();
 
   const location = useLocation();
-  const navigate = useNavigate();
   const book = location.state?.bookData;
 
   const toggle = (id) => {
