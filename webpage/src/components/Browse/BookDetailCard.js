@@ -1,38 +1,26 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Accordion, AccordionBody, AccordionHeader, AccordionItem,
   Container, Row, Col, ListGroup, ListGroupItem, Card, CardBody,
-  CardTitle, CardSubtitle, CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter,
-  Offcanvas, OffcanvasHeader, OffcanvasBody
+  CardTitle, CardSubtitle, CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
-import { toast } from 'react-toastify';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { FaCheckCircle } from 'react-icons/fa';
 import { FiTag, FiBookOpen, FiUser, FiCalendar, FiMessageSquare, FiInfo, FiCreditCard } from 'react-icons/fi';
 import './BookDetailCard.css';
+import { useCart } from '../../context/CartContext';
+import CartOffcanvas from '../shared/CartOffcanvas';
 
 function BookDetailCard() {
   const [open, setOpen] = useState('');
-
   const [modalOpen, setModalOpen] = useState(false);
-
-
   const [cartOpen, setCartOpen] = useState(false);
-
-
-  const [cartItems, setCartItems] = useState([]);
+  const { addToCart } = useCart();
 
   const location = useLocation();
+  const navigate = useNavigate();
   const book = location.state?.bookData;
-
-  const clearCart = () => {
-    setCartItems([]);
-    toast.info("Proceed to Checkout");
-  };
-
 
   const toggle = (id) => {
     setOpen(open === id ? '' : id);
@@ -43,17 +31,7 @@ function BookDetailCard() {
   const toggleCart = () => setCartOpen(!cartOpen);
 
   const handleAddToCart = () => {
-   
-   
-    setCartItems(prevItems => prevItems.concat(book));
-
-
-
-    console.log(book);
-    
-    
-    toast.success(`"${book.title}" added to cart!`);
-      
+    addToCart(book);
   };
 
   const cartOpenButton = () => {
@@ -332,54 +310,8 @@ function BookDetailCard() {
         </ModalFooter>
       </Modal>
 
-
-
-
-
-
-
-      
-      <Offcanvas isOpen={cartOpen} toggle={toggleCart} direction="end">
-        <OffcanvasHeader toggle={toggleCart}>
-          Shopping Cart ({cartItems.length} items)
-        </OffcanvasHeader>
-        <OffcanvasBody>
-          {cartItems.length === 0 ? (
-            <p className="text-muted">Your cart is empty</p>
-          ) : (
-            <div>
-              {cartItems.map((item, index) => (
-                <Card key={index} className="mb-3">
-                  <CardBody>
-                    <Row>
-                      <Col xs="3">
-                       
-                          <img src={item.image} alt={item.title} style={{ width: '100%', height: '80px', objectFit: 'cover' }} className="rounded" />
-                        
-                      </Col>
-                      <Col xs="9">
-                        <h6 className="fw-bold mb-1">{item.title}</h6>
-                        <p className="text-muted small mb-1">by {item.author}</p>
-                        <p className="text-success mb-2">10$</p>
-                       
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Card>
-              ))}
-              <hr />
-              <div className="text-center">
-                <Button color="primary" size="lg" className="w-100" onClick={() => {
-    clearCart();
-    toggleCart();
-  }}>
-                  Proceed to Checkout
-                </Button>
-              </div>
-            </div>
-          )}
-        </OffcanvasBody>
-      </Offcanvas>
+      {/* Cart Offcanvas */}
+      <CartOffcanvas isOpen={cartOpen} toggle={toggleCart} />
     </Container>
   );
 }

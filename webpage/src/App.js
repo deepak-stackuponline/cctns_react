@@ -8,6 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import FooterFixed from "./components/Home/footer/FooterFixed";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CartProvider } from './context/CartContext';
 
 
 function MainContent() {
@@ -58,31 +59,34 @@ return (
 
 function App() {
   return (
-    <Router>
-      <MainContent />
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+    <CartProvider>
+      <Router>
+        <MainContent />
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 <ToastContainer 
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        style={{ zIndex: 9999 }}
-      ></ToastContainer>
-    </Router>
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          style={{ zIndex: 9999 }}
+        ></ToastContainer>
+      </Router>
+    </CartProvider>
   );
 }
 

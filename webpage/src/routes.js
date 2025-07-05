@@ -9,6 +9,7 @@ import GetRecommendations from './components/Recommendations/GetRecommendations'
 import BookDetailCard from './components/Browse/BookDetailCard';
 import LoginPage from './components/Login/LoginPage';
 import RegisterPage from './components/Login/RegisterPage';
+import Checkout from './components/Browse/Checkout';
 
 function AppRoutes() {
  
@@ -30,6 +31,7 @@ function AppRoutes() {
         <Route path="/recommendations" element={<GetRecommendations />} />
         <Route path="/profile" element={<ProfileSection />} />
         <Route path="/book/:id" element={<BookDetailCard />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </div>
   );

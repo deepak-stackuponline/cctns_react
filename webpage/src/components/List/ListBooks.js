@@ -35,7 +35,6 @@ function ListBooks() {
 
 
   const handleSubmit = (values, { resetForm }) => {
-    console.log('Form submitted with values:', values)
     resetForm();
   }
 
