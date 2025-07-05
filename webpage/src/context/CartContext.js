@@ -68,10 +68,12 @@ export const CartProvider = ({ children }) => {
     updateCartCount(updatedCart);
   };
 
-  const clearCart = () => {
+  const clearCart = (showToast = true) => {
     setCartItems([]);
     setCartCount(0);
-    toast.info("Cart cleared");
+    if (showToast) {
+      toast.info("Cart cleared");
+    }
   };
 
   const getCartTotal = () => {

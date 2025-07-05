@@ -8,10 +8,12 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { FiCreditCard, FiUser, FiArrowLeft } from 'react-icons/fi';
+import { useCart } from '../../context/CartContext';
 
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { clearCart } = useCart();
   // Get cart items from location state only
   const cartItems = location.state?.cartItems;
   
@@ -87,6 +89,7 @@ function Checkout() {
     setTimeout(() => {
       setIsProcessing(false);
       setSubmitting(false);
+      clearCart(false); // Clear the cart after successful order without showing toast
       toast.success("Order placed successfully!");
       navigate('/home');
     }, 2000);
