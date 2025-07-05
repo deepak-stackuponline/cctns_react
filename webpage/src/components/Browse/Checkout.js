@@ -7,7 +7,7 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import { FiCreditCard, FiUser, FiArrowLeft } from 'react-icons/fi';
+import { FiCreditCard, FiUser } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 
 function Checkout() {
@@ -95,10 +95,6 @@ function Checkout() {
     }, 2000);
   };
 
-  const handleBackToCart = () => {
-    navigate(-1);
-  };
-
   if (cartItems.length === 0) {
     return (
       <Container className="mt-5">
@@ -121,10 +117,6 @@ function Checkout() {
     <Container className="mt-4">
       <Row>
         <Col xs="12" className="mb-3">
-          <Button color="link" onClick={handleBackToCart} className="p-0 mb-3">
-            <FiArrowLeft className="me-2" />
-            Back to Cart
-          </Button>
           <h2 className="fw-bold">Checkout</h2>
         </Col>
       </Row>
@@ -360,19 +352,6 @@ function Checkout() {
                     </Row>
                   </CardBody>
                 </Card>
-
-                {/* Place Order Button */}
-                <div className="text-center">
-                  <Button 
-                    color="success" 
-                    size="lg" 
-                    type="submit"
-                    disabled={isProcessing || isSubmitting}
-                    className="px-5"
-                  >
-                    {isProcessing ? 'Processing...' : `Place Order - $${(calculateTotal() + 5 + calculateTotal() * 0.08).toFixed(2)}`}
-                  </Button>
-                </div>
               </Form>
             )}
           </Formik>
@@ -427,6 +406,19 @@ function Checkout() {
                   <Col>Total:</Col>
                   <Col className="text-end">${(calculateTotal() + 5 + calculateTotal() * 0.08).toFixed(2)}</Col>
                 </Row>
+              </div>
+
+              {/* Place Order Button */}
+              <div className="mt-4 d-grid">
+                <Button 
+                  color="success" 
+                  size="lg" 
+                  onClick={() => document.querySelector('form').requestSubmit()}
+                  disabled={isProcessing}
+                  className="fw-bold"
+                >
+                  {isProcessing ? 'Processing...' : `Place Order - $${(calculateTotal() + 5 + calculateTotal() * 0.08).toFixed(2)}`}
+                </Button>
               </div>
             </CardBody>
           </Card>
