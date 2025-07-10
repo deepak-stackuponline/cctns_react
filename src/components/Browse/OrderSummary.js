@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardBody, CardTitle, Row, Col, Button, Input, InputGroup, InputGroupText } from 'reactstrap'
+import { Card, CardBody, CardTitle, Row, Col, Button, Input, InputGroup } from 'reactstrap'
 
 function OrderSummary({ 
   cartItems = [], 
@@ -19,7 +19,7 @@ function OrderSummary({
   }
 
   const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return
+    
     
     onApplyCouponChild(couponCode.trim())
   }
@@ -77,7 +77,8 @@ function OrderSummary({
             ) : (
               <div className="d-flex justify-content-between align-items-center p-2 bg-success bg-opacity-10 rounded">
                 <div>
-                  <small className="text-success fw-bold">✓ {appliedCoupon}</small>
+                 <small className="text-success fw-bold">&#10003; {appliedCoupon}</small>
+
                   <br />
                   <small className="text-muted">Coupon applied successfully</small>
                 </div>

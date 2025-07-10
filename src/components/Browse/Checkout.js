@@ -34,35 +34,27 @@ const availableCoupons = {
 
 
 const handleApplyCoupon = (couponCode) => {
-  // If no coupon code is entered, clear everything
-  if (!couponCode) {
-    setAppliedCoupon(null)
-    setCouponDiscount(0)
-    return
-  }
+  
 
-
-
-  // Check if the coupon code exists in our list
-  const coupon = availableCoupons[couponCode.toUpperCase()]
+  const coupon = availableCoupons[couponCode]
   
   if (coupon) {
-    // Valid coupon found
+
     const subtotal = calculateTotal()
     const discount = (subtotal * coupon.discount) / 100
     
-    setAppliedCoupon(couponCode.toUpperCase())
+    setAppliedCoupon(couponCode)
     setCouponDiscount(discount)
    
   } else {
-    // Invalid coupon code
+
     alert('Invalid coupon code. Please try again.')
   }
 
 
 }
 
-// Simple function to update the coupon code as user types
+
 const handleCouponCodeChange = (code) => {
   setCouponCode(code)
 }
@@ -568,19 +560,19 @@ const validationSchema = Yup.object({
               </Form>
             </Col>
 
-<OrderSummary
-  cartItems={cartItems}
-  calculateTotalChild={calculateTotal}
-  calculateDiscountChild={calculateDiscount}
-  calculateTaxChild={calculateTax}
-  calculateFinalTotalChild={calculateFinalTotal}
-  onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
-  onApplyCouponChild={handleApplyCoupon}
-  onCouponCodeChangeChild={handleCouponCodeChange}
-  appliedCoupon={appliedCoupon}
-  couponDiscount={couponDiscount}
-  couponCode={couponCode}
-/>
+            <OrderSummary
+              cartItems={cartItems}
+              calculateTotalChild={calculateTotal}
+              calculateDiscountChild={calculateDiscount}
+              calculateTaxChild={calculateTax}
+              calculateFinalTotalChild={calculateFinalTotal}
+              onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
+              onApplyCouponChild={handleApplyCoupon}
+              onCouponCodeChangeChild={handleCouponCodeChange}
+              appliedCoupon={appliedCoupon}
+              couponDiscount={couponDiscount}
+              couponCode={couponCode}
+            />
           </>
         )}
       </Formik>
