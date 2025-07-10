@@ -1,11 +1,27 @@
 import React from 'react'
-import { Card, CardBody, CardTitle, Row, Col, Button } from 'reactstrap'
+import { Card, CardBody, CardTitle, Row, Col, Button, Input, InputGroup, InputGroupText } from 'reactstrap'
 
-function OrderSummary({ cartItems = [], calculateTotal, onPlaceOrder }) {
+function OrderSummary({ 
+  cartItems = [], 
+  calculateTotalChild, 
+  calculateDiscountChild,
+  calculateTaxChild,
+  calculateFinalTotalChild,
+  onPlaceOrderChild,
+  onApplyCouponChild,
+  onCouponCodeChangeChild,
+  appliedCoupon = null,
+  couponDiscount = 0,
+  couponCode = ''
+}) {
   const handlePlaceOrder = () => {
-    if (onPlaceOrder) {
-      onPlaceOrder()
-    }
+    onPlaceOrderChild()
+  }
+
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) return
+    
+    onApplyCouponChild(couponCode.trim())
   }
 
   return (
@@ -37,11 +53,66 @@ function OrderSummary({ cartItems = [], calculateTotal, onPlaceOrder }) {
                 </Col>
               </Row>
             </div>
-          ))}          <div className="mt-3">
-           
+          ))}
+          
+          {/* Coupon Section */}
+          <div className="mb-3">
+            <h6 className="mb-2">Discount Coupon</h6>
+            {!appliedCoupon ? (
+              <InputGroup size="sm">
+                <Input
+                  type="text"
+                  placeholder="Enter coupon code"
+                  value={couponCode}
+                  onChange={(e) => onCouponCodeChangeChild(e.target.value.toUpperCase())}
+                />
+                <Button
+                  color="primary"
+                  onClick={handleApplyCoupon}
+                  disabled={!couponCode.trim()}
+                >
+                  Apply
+                </Button>
+              </InputGroup>
+            ) : (
+              <div className="d-flex justify-content-between align-items-center p-2 bg-success bg-opacity-10 rounded">
+                <div>
+                  <small className="text-success fw-bold">✓ {appliedCoupon}</small>
+                  <br />
+                  <small className="text-muted">Coupon applied successfully</small>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="mt-3">
+            <Row className="mb-2">
+              <Col>Subtotal:</Col>
+              <Col className="text-end">${calculateTotalChild().toFixed(2)}</Col>
+            </Row>
+            
+            <Row className="mb-2 text-success">
+              <Col>Discount (5%):</Col>
+              <Col className="text-end">-${calculateDiscountChild().toFixed(2)}</Col>
+            </Row>
+            
+            {appliedCoupon && couponDiscount > 0 && (
+              <Row className="mb-2 text-success">
+                <Col>Coupon Discount:</Col>
+                <Col className="text-end">-${couponDiscount.toFixed(2)}</Col>
+              </Row>
+            )}
+            
+            <Row className="mb-2">
+              <Col>Tax (16%):</Col>
+              <Col className="text-end">${calculateTaxChild().toFixed(2)}</Col>
+            </Row>
+            
+            <hr />
+            
             <Row className="fw-bold">
               <Col>Total:</Col>
-              <Col className="text-end">${calculateTotal()}.00</Col>
+              <Col className="text-end">${calculateFinalTotalChild().toFixed(2)}</Col>
             </Row>
           </div>
 
@@ -50,10 +121,9 @@ function OrderSummary({ cartItems = [], calculateTotal, onPlaceOrder }) {
               color="success" 
               size="lg" 
               onClick={handlePlaceOrder}
-             
               className="fw-bold"
             >
-              {`Place Order - $${calculateTotal()}.00`}
+              {`Place Order - $${calculateFinalTotalChild().toFixed(2)}`}
             </Button>
           </div>
         </CardBody>

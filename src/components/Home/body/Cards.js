@@ -9,7 +9,7 @@ function Cards({book}) {
   const navigate = useNavigate();
 
   const handleViewDetails = () => {
-    navigate(`/book/${book.id}`, { state: { bookData: book } });
+    navigate(`/book/${book.id}`, { state: { bookDataTest: book } });
   };
 
   return (

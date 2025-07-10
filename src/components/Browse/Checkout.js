@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Container, Row, Col, Card, CardBody, CardTitle, Button, Form, FormGroup, Label, Input,
@@ -14,11 +14,100 @@ function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const cartItems = location.state?.cartItems;
+
+
+
+const [appliedCoupon, setAppliedCoupon] = useState(null)
+const [couponDiscount, setCouponDiscount] = useState(0)
+const [couponCode, setCouponCode] = useState('')
+
+
+const cartItems = location.state?.cartItems;
   
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.buyPrice, 0)
+  
+const availableCoupons = {
+  '10': { discount: 10, type: 'percentage' },
+  '20': { discount: 20, type: 'percentage' },
+  '50': { discount: 50, type: 'percentage' },
+  '15': { discount: 15, type: 'percentage' }
+}
+
+
+const handleApplyCoupon = (couponCode) => {
+  // If no coupon code is entered, clear everything
+  if (!couponCode) {
+    setAppliedCoupon(null)
+    setCouponDiscount(0)
+    return
   }
+
+
+
+  // Check if the coupon code exists in our list
+  const coupon = availableCoupons[couponCode.toUpperCase()]
+  
+  if (coupon) {
+    // Valid coupon found
+    const subtotal = calculateTotal()
+    const discount = (subtotal * coupon.discount) / 100
+    
+    setAppliedCoupon(couponCode.toUpperCase())
+    setCouponDiscount(discount)
+   
+  } else {
+    // Invalid coupon code
+    alert('Invalid coupon code. Please try again.')
+  }
+
+
+}
+
+// Simple function to update the coupon code as user types
+const handleCouponCodeChange = (code) => {
+  setCouponCode(code)
+}
+
+
+
+
+
+const calculateTotal = () => {
+  return cartItems.reduce((total, item) => total + item.buyPrice, 0)
+}
+
+const calculateDiscount = () => {
+  const subtotal = calculateTotal();
+  return subtotal * 0.05; 
+}
+
+const calculateTax = () => {
+  const subtotal = calculateTotal();
+  const discount = calculateDiscount();
+  const afterDiscount = subtotal - discount - couponDiscount;
+  return afterDiscount * 0.16; 
+}
+
+
+// Update your calculateFinalTotal function to include coupon discount
+const calculateFinalTotal = () => {
+  const subtotal = calculateTotal()
+  const discount = calculateDiscount()
+  const tax = calculateTax()
+  return subtotal - discount - couponDiscount + tax
+}
+
+const handlePlaceOrder = (submitForm) => {
+  
+  submitForm();
+}
+
+
+
+
+
+
+
+
 
 const stateDistrictData = {
   Kerala: ['Thiruvananthapuram', 'Ernakulam', 'Kozhikode', 'Thrissur', 'Kollam'],
@@ -111,14 +200,18 @@ const validationSchema = Yup.object({
       },
       cartItems: cartItems,
       orderSummary: {
-        totalAmount: calculateTotal(),
+        subtotal: calculateTotal(),
+        discount: calculateDiscount(),
+        couponDiscount: couponDiscount,
+        appliedCoupon: appliedCoupon,
+        tax: calculateTax(),
+        totalAmount: calculateFinalTotal(),
         itemCount: cartItems.length,
         orderDate: new Date().toString()
       }
     };
     
-    console.log('Complete Order Data:', orderData);
-    
+    console.log('Order Data:', orderData);
     toast.success("Order placed successfully!");
     navigate('/home');
   };
@@ -155,7 +248,7 @@ const validationSchema = Yup.object({
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, submitForm }) => (
             <>
               {/* Checkout Form */}
               <Col md="8" className="mb-4">
@@ -385,35 +478,6 @@ const validationSchema = Yup.object({
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                   </CardBody>
                 </Card>
 
@@ -504,12 +568,19 @@ const validationSchema = Yup.object({
               </Form>
             </Col>
 
-            
-            <OrderSummary 
-              cartItems={cartItems} 
-              calculateTotal={calculateTotal}
-              onPlaceOrder={handleSubmit}
-            />
+<OrderSummary
+  cartItems={cartItems}
+  calculateTotalChild={calculateTotal}
+  calculateDiscountChild={calculateDiscount}
+  calculateTaxChild={calculateTax}
+  calculateFinalTotalChild={calculateFinalTotal}
+  onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
+  onApplyCouponChild={handleApplyCoupon}
+  onCouponCodeChangeChild={handleCouponCodeChange}
+  appliedCoupon={appliedCoupon}
+  couponDiscount={couponDiscount}
+  couponCode={couponCode}
+/>
           </>
         )}
       </Formik>

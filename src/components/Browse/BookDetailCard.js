@@ -20,8 +20,14 @@ function BookDetailCard() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const book = location.state?.bookData;
 
+
+
+
+  const book = location.state?.bookDataTest;
+
+
+  
   const toggle = (id) => {
     setOpen(open === id ? '' : id);
   };
@@ -31,7 +37,8 @@ function BookDetailCard() {
   const toggleCart = () => setCartOpen(!cartOpen);
 
   const handleAddToCart = () => {
-    setCartItems(prevItems => [...prevItems, book]);
+    setCartItems(hello => [...hello, book]);
+    console.log('Book added to cart:', book);
     toast.success('Book added to cart!');
   };
 
