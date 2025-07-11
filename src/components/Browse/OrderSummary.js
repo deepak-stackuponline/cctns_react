@@ -1,4 +1,5 @@
 import React from 'react'
+import { useEffect } from 'react'
 import { Card, CardBody, CardTitle, Row, Col, Button, Input, InputGroup } from 'reactstrap'
 
 function OrderSummary({ 
@@ -12,8 +13,21 @@ function OrderSummary({
   onCouponCodeChangeChild,
   appliedCoupon = null,
   couponDiscount = 0,
-  couponCode = ''
+  couponCode = '',
+  onTotalChildUpdate
 }) {
+
+// Calculate the Total Child value
+  const totalChildValue = calculateFinalTotalChild() + 2;
+
+  // Send Total Child value to parent using useEffect
+  useEffect(() => {
+    if (onTotalChildUpdate) {
+      onTotalChildUpdate(totalChildValue);
+    }
+  }, [totalChildValue, onTotalChildUpdate]);
+
+
   const handlePlaceOrder = () => {
     onPlaceOrderChild()
   }
@@ -23,6 +37,8 @@ function OrderSummary({
     
     onApplyCouponChild(couponCode.trim())
   }
+
+  
 
   return (
     <Col md="4" className="mb-4">
@@ -114,6 +130,12 @@ function OrderSummary({
             <Row className="fw-bold">
               <Col>Total:</Col>
               <Col className="text-end">${calculateFinalTotalChild().toFixed(2)}</Col>
+            </Row>
+
+            <hr/>
+            <Row className="fw-bold">
+              <Col>Total Child:</Col>
+              <Col className="text-end">${totalChildValue.toFixed(2)}</Col>
             </Row>
           </div>
 

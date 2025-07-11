@@ -9,11 +9,22 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { FiCreditCard, FiUser } from 'react-icons/fi';
 import OrderSummary from './OrderSummary';
+import ExtraComponent from './ExtraComponent';
 
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
   
+
+
+
+// Add this state to store the Total Child value from OrderSummary
+const [totalChildFromOrderSummary, setTotalChildFromOrderSummary] = useState(0)
+
+// Add this function to handle Total Child value from OrderSummary
+const handleTotalChildUpdate = (totalChildValue) => {
+  setTotalChildFromOrderSummary(totalChildValue)
+}
 
 
 
@@ -560,19 +571,36 @@ const validationSchema = Yup.object({
               </Form>
             </Col>
 
-            <OrderSummary
-              cartItems={cartItems}
-              calculateTotalChild={calculateTotal}
-              calculateDiscountChild={calculateDiscount}
-              calculateTaxChild={calculateTax}
-              calculateFinalTotalChild={calculateFinalTotal}
-              onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
-              onApplyCouponChild={handleApplyCoupon}
-              onCouponCodeChangeChild={handleCouponCodeChange}
-              appliedCoupon={appliedCoupon}
-              couponDiscount={couponDiscount}
-              couponCode={couponCode}
-            />
+   
+              <OrderSummary
+                cartItems={cartItems}
+                calculateTotalChild={calculateTotal}
+                calculateDiscountChild={calculateDiscount}
+                calculateTaxChild={calculateTax}
+                calculateFinalTotalChild={calculateFinalTotal}
+                onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
+                onApplyCouponChild={handleApplyCoupon}
+                onCouponCodeChangeChild={handleCouponCodeChange}
+                appliedCoupon={appliedCoupon}
+                couponDiscount={couponDiscount}
+                couponCode={couponCode}
+                onTotalChildUpdate={handleTotalChildUpdate}
+              />
+
+              
+              <Card className="shadow-sm mt-4">
+                <CardBody>
+                  <CardTitle tag="h6" className="fw-bold mb-2">
+                    Total Child Value from OrderSummary
+                  </CardTitle>
+                  <Row className="fw-bold text-primary">
+                    <Col>Total Child (from OrderSummary):</Col>
+                    <Col className="text-end">${totalChildFromOrderSummary.toFixed(2)}</Col>
+                  </Row>
+                </CardBody>
+              </Card>
+              
+           <ExtraComponent totalValue={totalChildFromOrderSummary} />
           </>
         )}
       </Formik>
