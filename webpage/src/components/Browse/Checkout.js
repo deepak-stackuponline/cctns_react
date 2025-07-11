@@ -8,63 +8,171 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { FiCreditCard, FiUser } from 'react-icons/fi';
-import { useCart } from '../../context/CartContext';
+import OrderSummary from './OrderSummary';
+import ExtraComponent from './ExtraComponent';
 
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { clearCart } = useCart();
-  // Get cart items from location state only
-  const cartItems = location.state?.cartItems;
   
-  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Validation schema using Yup
-  const validationSchema = Yup.object({
-    firstName: Yup.string()
-      .min(2, 'First name must be at least 2 characters')
-      .max(50, 'First name must be less than 50 characters')
-      .required('First name is required'),
-    lastName: Yup.string()
-      .min(2, 'Last name must be at least 2 characters')
-      .max(50, 'Last name must be less than 50 characters')
-      .required('Last name is required'),
-    email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
-    phone: Yup.string()
-      .matches(/^[+]?[1-9][\d]{0,15}$/, 'Phone number is not valid')
-      .required('Phone number is required'),
-    address: Yup.string()
-      .min(5, 'Address must be at least 5 characters')
-      .required('Address is required'),
-    city: Yup.string()
-      .min(2, 'City must be at least 2 characters')
-      .required('City is required'),
-    zipCode: Yup.string()
-      .matches(/^\d{5}(-\d{4})?$/, 'ZIP code must be in format 12345 or 12345-6789')
-      .required('ZIP code is required'),
-    cardHolderName: Yup.string()
-      .min(2, 'Cardholder name must be at least 2 characters')
-      .required('Cardholder name is required'),
-    cardNumber: Yup.string()
-      .matches(/^\d{16}$/, 'Card number must be 16 digits')
-      .required('Card number is required'),
-    expiryDate: Yup.string()
-      .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Expiry date must be in MM/YY format')
-      .required('Expiry date is required'),
-    cvv: Yup.string()
-      .matches(/^\d{3,4}$/, 'CVV must be 3 or 4 digits')
-      .required('CVV is required')
-  });
 
-  // Initial form values
+
+// Add this state to store the Total Child value from OrderSummary
+const [totalChildFromOrderSummary, setTotalChildFromOrderSummary] = useState(0)
+
+// Add this function to handle Total Child value from OrderSummary
+const handleTotalChildUpdate = (totalChildValue) => {
+  setTotalChildFromOrderSummary(totalChildValue)
+}
+
+
+
+const [appliedCoupon, setAppliedCoupon] = useState(null)
+const [couponDiscount, setCouponDiscount] = useState(0)
+const [couponCode, setCouponCode] = useState('')
+
+
+const cartItems = location.state?.cartItems;
+  
+  
+const availableCoupons = {
+  '10': { discount: 10, type: 'percentage' },
+  '20': { discount: 20, type: 'percentage' },
+  '50': { discount: 50, type: 'percentage' },
+  '15': { discount: 15, type: 'percentage' }
+}
+
+
+const handleApplyCoupon = (couponCode) => {
+  
+
+  const coupon = availableCoupons[couponCode]
+  
+  if (coupon) {
+
+    const subtotal = calculateTotal()
+    const discount = (subtotal * coupon.discount) / 100
+    
+    setAppliedCoupon(couponCode)
+    setCouponDiscount(discount)
+   
+  } else {
+
+    alert('Invalid coupon code. Please try again.')
+  }
+
+
+}
+
+
+const handleCouponCodeChange = (code) => {
+  setCouponCode(code)
+}
+
+
+
+
+
+const calculateTotal = () => {
+  return cartItems.reduce((total, item) => total + item.buyPrice, 0)
+}
+
+const calculateDiscount = () => {
+  const subtotal = calculateTotal();
+  return subtotal * 0.05; 
+}
+
+const calculateTax = () => {
+  const subtotal = calculateTotal();
+  const discount = calculateDiscount();
+  const afterDiscount = subtotal - discount - couponDiscount;
+  return afterDiscount * 0.16; 
+}
+
+
+// Update your calculateFinalTotal function to include coupon discount
+const calculateFinalTotal = () => {
+  const subtotal = calculateTotal()
+  const discount = calculateDiscount()
+  const tax = calculateTax()
+  return subtotal - discount - couponDiscount + tax
+}
+
+const handlePlaceOrder = (submitForm) => {
+  
+  submitForm();
+}
+
+
+
+
+
+
+
+
+
+const stateDistrictData = {
+  Kerala: ['Thiruvananthapuram', 'Ernakulam', 'Kozhikode', 'Thrissur', 'Kollam'],
+  Tamil_Nadu : ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
+  Karnataka: ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum']
+};
+
+const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .min(2, 'First name must be at least 2 characters')
+    .max(50, 'First name must be less than 50 characters')
+    .required('First name is required'),
+  lastName: Yup.string()
+    .min(2, 'Last name must be at least 2 characters')
+    .max(50, 'Last name must be less than 50 characters')
+    .required('Last name is required'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  phone: Yup.string()
+    .matches(/^[+]?[1-9][\d]{0,15}$/, 'Phone number is not valid')
+    .required('Phone number is required'),
+  address: Yup.string()
+    .min(5, 'Address must be at least 5 characters')
+    .required('Address is required'),
+  city: Yup.string()
+    .min(2, 'City must be at least 2 characters')
+    .required('City is required'),
+  zipCode: Yup.string()
+    .matches(/^\d{5}(-\d{4})?$/, 'ZIP code must be in format 12345 or 12345-6789')
+    .required('ZIP code is required'),
+  cardHolderName: Yup.string()
+    .min(2, 'Cardholder name must be at least 2 characters')
+    .required('Cardholder name is required'),
+  cardNumber: Yup.string()
+    .matches(/^\d{16}$/, 'Card number must be 16 digits')
+    .required('Card number is required'),
+  expiryDate: Yup.string()
+    .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Expiry date must be in MM/YY format')
+    .required('Expiry date is required'),
+  cvv: Yup.string()
+    .matches(/^\d{3,4}$/, 'CVV must be 3 or 4 digits')
+    .required('CVV is required'),
+  state: Yup.string()
+    .required('State is required'),
+  district: Yup.string()
+    .when('state', {
+      is: 'Kerala',
+      then: (msg) => msg.required('District is required for Kerala'),
+      otherwise: (msg) => msg
+    })
+});
+
+
   const initialValues = {
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     address: '',
+    state: '',
+    district: '',
     city: '',
     zipCode: '',
     cardNumber: '',
@@ -73,26 +181,42 @@ function Checkout() {
     cardHolderName: ''
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => {
-      const price = item.rentPrice || 10; // Use actual rent price or default to $10
-      const quantity = item.quantity || 1;
-      return total + (price * quantity);
-    }, 0);
-  };
-
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setIsProcessing(true);
-    setSubmitting(true);
-
-    // Simulate processing time
-    setTimeout(() => {
-      setIsProcessing(false);
-      setSubmitting(false);
-      clearCart(false); // Clear the cart after successful order without showing toast
-      toast.success("Order placed successfully!");
-      navigate('/home');
-    }, 2000);
+  const handleSubmit = (values) => {
+    
+    const orderData = {
+      customerInfo: {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        state: values.state,
+        district: values.district,
+        zipCode: values.zipCode
+      },
+      paymentInfo: {
+        cardHolderName: values.cardHolderName,
+        cardNumber: values.cardNumber,
+        expiryDate: values.expiryDate,
+        cvv: values.cvv
+      },
+      cartItems: cartItems,
+      orderSummary: {
+        subtotal: calculateTotal(),
+        discount: calculateDiscount(),
+        couponDiscount: couponDiscount,
+        appliedCoupon: appliedCoupon,
+        tax: calculateTax(),
+        totalAmount: calculateFinalTotal(),
+        itemCount: cartItems.length,
+        orderDate: new Date().toString()
+      }
+    };
+    
+    console.log('Order Data:', orderData);
+    toast.success("Order placed successfully!");
+    navigate('/home');
   };
 
   if (cartItems.length === 0) {
@@ -122,15 +246,16 @@ function Checkout() {
       </Row>
 
       <Row>
-        {/* Checkout Form */}
-        <Col md="8" className="mb-4">
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-              <Form onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, submitForm }) => (
+            <>
+              {/* Checkout Form */}
+              <Col md="8" className="mb-4">
+                <Form onSubmit={handleSubmit}>
                 {/* Shipping Information */}
                 <Card className="shadow-sm mb-4">
                   <CardBody>
@@ -265,6 +390,97 @@ function Checkout() {
                         </FormGroup>
                       </Col>
                     </Row>
+
+
+
+
+
+
+{/* State vs Kerala */}
+
+<Row>
+  
+  <Col md="4">
+    <FormGroup>
+      <Label for="state">State</Label>
+      <Input
+        type="select" 
+        name="state"
+        id="state"
+        value={values.state} 
+        onChange={(e) => {
+          
+
+          
+          handleChange(e);
+
+         
+          handleChange({ target: { name: 'district', value: '' } });
+        }}
+        onBlur={handleBlur} 
+        invalid={touched.state && errors.state}
+      >
+        <option value="">Select State</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Tamil_Nadu">Tamil Nadu</option>
+        <option value="Karnataka">Karnataka</option>
+      </Input>
+
+    
+      {touched.state && errors.state && (
+        <FormFeedback>{errors.state}</FormFeedback>
+      )}
+    </FormGroup>
+  </Col>
+
+
+  <Col md="4">
+    <FormGroup>
+      <Label for="district">
+        District
+        {values.state === 'Kerala' && <span className="text-danger">*</span>}
+      </Label>
+      <Input
+        type="select"
+        name="district"
+        id="district"
+        value={values.district} 
+        onChange={handleChange}
+        onBlur={handleBlur}
+        invalid={touched.district && errors.district}
+       
+        disabled={!values.state}
+      >
+        <option value="">
+          
+          {values.state ? 'Select District' : 'Please select a state first'}
+        </option>
+
+        {(stateDistrictData[values.state] || []).map((districtName) => (
+          <option key={districtName} value={districtName}>
+            {districtName}
+          </option>
+        ))}
+      </Input>
+
+
+      {touched.district && errors.district && (
+        <FormFeedback>{errors.district}</FormFeedback>
+      )}
+    </FormGroup>
+  </Col>
+</Row>
+
+
+
+
+
+
+
+
+
+
+
                   </CardBody>
                 </Card>
 
@@ -353,77 +569,43 @@ function Checkout() {
                   </CardBody>
                 </Card>
               </Form>
-            )}
-          </Formik>
-        </Col>
+            </Col>
 
-        {/* Order Summary */}
-        <Col md="4" className="mb-4">
-          <Card className="shadow-sm">
-            <CardBody>
-              <CardTitle tag="h5" className="fw-bold mb-3">
-                Order Summary
-              </CardTitle>
+   
+              <OrderSummary
+                cartItems={cartItems}
+                calculateTotalChild={calculateTotal}
+                calculateDiscountChild={calculateDiscount}
+                calculateTaxChild={calculateTax}
+                calculateFinalTotalChild={calculateFinalTotal}
+                onPlaceOrderChild={() => handlePlaceOrder(submitForm)}
+                onApplyCouponChild={handleApplyCoupon}
+                onCouponCodeChangeChild={handleCouponCodeChange}
+                appliedCoupon={appliedCoupon}
+                couponDiscount={couponDiscount}
+                couponCode={couponCode}
+                onTotalChildUpdate={handleTotalChildUpdate}
+              />
+
               
-              {cartItems.map((item, index) => (
-                <div key={index} className="mb-3 pb-3 border-bottom">
-                  <Row>
-                    <Col xs="3">
-                      <img 
-                        src={item.image} 
-                        alt={item.title} 
-                        style={{ width: '100%', height: '60px', objectFit: 'cover' }} 
-                        className="rounded" 
-                      />
-                    </Col>
-                    <Col xs="9">
-                      <h6 className="mb-1">{item.title}</h6>
-                      <p className="text-muted small mb-1">by {item.author}</p>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <p className="text-success mb-0 fw-bold">${item.rentPrice || 10}</p>
-                        <small className="text-muted">Qty: {item.quantity || 1}</small>
-                      </div>
-                    </Col>
+              <Card className="shadow-sm mt-4">
+                <CardBody>
+                  <CardTitle tag="h6" className="fw-bold mb-2">
+                    Total Child Value from OrderSummary
+                  </CardTitle>
+                  <Row className="fw-bold text-primary">
+                    <Col>Total Child (from OrderSummary):</Col>
+                    <Col className="text-end">${totalChildFromOrderSummary.toFixed(2)}</Col>
                   </Row>
-                </div>
-              ))}
+                </CardBody>
+              </Card>
 
-              <div className="mt-3">
-                <Row className="mb-2">
-                  <Col>Subtotal:</Col>
-                  <Col className="text-end">${calculateTotal()}.00</Col>
-                </Row>
-                <Row className="mb-2">
-                  <Col>Shipping:</Col>
-                  <Col className="text-end">$5.00</Col>
-                </Row>
-                <Row className="mb-2">
-                  <Col>Tax:</Col>
-                  <Col className="text-end">${(calculateTotal() * 0.08).toFixed(2)}</Col>
-                </Row>
-                <hr />
-                <Row className="fw-bold">
-                  <Col>Total:</Col>
-                  <Col className="text-end">${(calculateTotal() + 5 + calculateTotal() * 0.08).toFixed(2)}</Col>
-                </Row>
-              </div>
-
-              {/* Place Order Button */}
-              <div className="mt-4 d-grid">
-                <Button 
-                  color="success" 
-                  size="lg" 
-                  onClick={() => document.querySelector('form').requestSubmit()}
-                  disabled={isProcessing}
-                  className="fw-bold"
-                >
-                  {isProcessing ? 'Processing...' : `Place Order - $${(calculateTotal() + 5 + calculateTotal() * 0.08).toFixed(2)}`}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+              
+           <ExtraComponent totalValue={totalChildFromOrderSummary} />
+          </>
+        )}
+      </Formik>
+    </Row>
     </Container>
   );
 }

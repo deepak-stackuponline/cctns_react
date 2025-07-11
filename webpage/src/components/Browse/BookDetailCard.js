@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Accordion, AccordionBody, AccordionHeader, AccordionItem,
   Container, Row, Col, ListGroup, ListGroupItem, Card, CardBody,
-  CardTitle, CardSubtitle, CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter
+  CardTitle, CardSubtitle, CardText, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter,
+  Offcanvas, OffcanvasHeader, OffcanvasBody
 } from 'reactstrap';
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { FaCheckCircle } from 'react-icons/fa';
 import { FiTag, FiBookOpen, FiUser, FiCalendar, FiMessageSquare, FiInfo, FiCreditCard } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 import './BookDetailCard.css';
-import { useCart } from '../../context/CartContext';
-import CartOffcanvas from '../shared/CartOffcanvas';
 
 function BookDetailCard() {
   const [open, setOpen] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const { addToCart } = useCart();
+  const [cartItems, setCartItems] = useState([]);
 
   const location = useLocation();
-  const book = location.state?.bookData;
+  const navigate = useNavigate();
 
+
+
+
+  const book = location.state?.bookDataTest;
+
+
+  
   const toggle = (id) => {
     setOpen(open === id ? '' : id);
   };
@@ -30,11 +37,21 @@ function BookDetailCard() {
   const toggleCart = () => setCartOpen(!cartOpen);
 
   const handleAddToCart = () => {
-    addToCart(book);
+    setCartItems(hello => [...hello, book]);
+    console.log('Book added to cart:', book);
+    toast.success('Book added to cart!');
   };
 
   const cartOpenButton = () => {
     setCartOpen(true);
+  };
+
+  const handleProceedToCheckout = () => {
+    navigate('/checkout', {
+      state: {
+        cartItems: cartItems
+      }
+    });
   };
 
 
@@ -105,7 +122,7 @@ function BookDetailCard() {
                 }}
               >
                 <MdOutlineShoppingCartCheckout className="me-2" /> 
-                Add to Cart
+                Add to Cart  <span className='fw-bold'> &nbsp;${book.buyPrice}</span>
               </ListGroupItem>
             </ListGroup>
           </div>
@@ -194,9 +211,10 @@ function BookDetailCard() {
                 <FiMessageSquare className="me-2" />
                 Contact Lister
               </Button>
-                 <Button color="light" className="border" onClick={cartOpenButton}>
+
+               <Button color="light" className="border" onClick={() => cartOpenButton()}>
                 <FiMessageSquare className="me-2" />
-                        Open Cart
+                Open Cart
               </Button>
               
             
@@ -310,7 +328,83 @@ function BookDetailCard() {
       </Modal>
 
       {/* Cart Offcanvas */}
-      <CartOffcanvas isOpen={cartOpen} toggle={toggleCart} />
+      <Offcanvas isOpen={cartOpen} toggle={toggleCart} direction="end">
+        <OffcanvasHeader toggle={toggleCart}>
+          Shopping Cart ({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})
+        </OffcanvasHeader>
+        <OffcanvasBody>
+          {cartItems.length === 0 ? (
+            <div className="text-center py-5">
+              <div className="mb-3">
+                <MdOutlineShoppingCartCheckout size={64} className="text-muted" />
+              </div>
+              <h5 className="text-muted">Your cart is empty</h5>
+              <p className="text-muted">Add some books to get started!</p>
+            </div>
+          ) : (
+            <>
+              {cartItems.map((item, index) => (
+                <Card key={index} className="mb-3">
+                  <CardBody>
+                    <Row>
+                      <Col xs="4">
+                        <img 
+                          src={item.image} 
+                          alt={item.title} 
+                          style={{ width: '100%', height: '80px', objectFit: 'cover' }} 
+                          className="rounded" 
+                        />
+                      </Col>
+                      <Col xs="8">
+                        <h6 className="fw-bold mb-1">{item.title}</h6>
+                        <p className="text-muted small mb-1">by {item.author}</p>
+                        <p className="text-success mb-0">${item.buyPrice}</p>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              ))}
+              
+              <hr />
+              
+              {/* Cart Summary */}
+              <div className="mb-3">
+                <Row className="mb-2">
+                  <Col>
+                    <strong>Total Items:</strong>
+                  </Col>
+                  <Col className="text-end">
+                    {cartItems.length}
+                  </Col>
+                </Row>
+                <Row className="mb-2">
+                  <Col>
+                    <strong>Total Price:</strong>
+                  </Col>
+                  <Col className="text-end">
+                    <strong>${cartItems.reduce((total, item) => total + item.buyPrice, 0).toFixed(2)}</strong>
+                  </Col>
+                </Row>
+              </div>
+              
+              <hr />
+              
+              {/* Action Buttons */}
+              <div className="d-grid gap-2">
+                <Button 
+                  color="primary" 
+                  size="lg" 
+                  onClick={handleProceedToCheckout}
+                 
+                >
+                  Proceed to Checkout
+                </Button>
+                
+              </div>
+            </>
+          )}
+        </OffcanvasBody>
+      </Offcanvas>
     </Container>
   );
 }
