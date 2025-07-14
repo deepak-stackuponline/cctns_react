@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, CardBody, CardTitle } from 'reactstrap';
 
-function ExtraComponent({ totalValue }) {
+function ExtraComponent({ totalValuetoExtraComponent }) {
   return (
    
       <Card className="shadow-sm mt-4">
@@ -11,7 +11,7 @@ function ExtraComponent({ totalValue }) {
           </CardTitle>
           <Row className="fw-bold text-primary">
             <Col>Total (from OrderSummary):</Col>
-            <Col className="text-end">${totalValue.toFixed(2)}</Col>
+            <Col className="text-end">${totalValuetoExtraComponent.toFixed(2)}</Col>
           </Row>
         </CardBody>
       </Card>

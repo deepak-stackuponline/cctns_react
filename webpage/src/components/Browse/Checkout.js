@@ -18,10 +18,10 @@ function Checkout() {
 
 
 
-// Add this state to store the Total Child value from OrderSummary
+
 const [totalChildFromOrderSummary, setTotalChildFromOrderSummary] = useState(0)
 
-// Add this function to handle Total Child value from OrderSummary
+
 const handleTotalChildUpdate = (totalChildValue) => {
   setTotalChildFromOrderSummary(totalChildValue)
 }
@@ -601,7 +601,7 @@ const validationSchema = Yup.object({
               </Card>
 
               
-           <ExtraComponent totalValue={totalChildFromOrderSummary} />
+           <ExtraComponent totalValuetoExtraComponent={totalChildFromOrderSummary} />
           </>
         )}
       </Formik>

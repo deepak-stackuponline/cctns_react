@@ -20,15 +20,14 @@ function OrderSummary({
 
 
 
-// Calculate the Total Child value
+
   const totalChildValue = calculateFinalTotalChild() + 2;
 
-  // Send Total Child value to parent using useEffect
-  useEffect(() => {
-    if (onTotalChildUpdate) {
-      onTotalChildUpdate(totalChildValue);
-    }
-  }, [totalChildValue, onTotalChildUpdate]);
+
+useEffect(() => {
+  onTotalChildUpdate(totalChildValue);
+}, [totalChildValue, onTotalChildUpdate]);
+
 
 
 
@@ -100,7 +99,6 @@ function OrderSummary({
               <div className="d-flex justify-content-between align-items-center p-2 bg-success bg-opacity-10 rounded">
                 <div>
                  <small className="text-success fw-bold">&#10003; {appliedCoupon}</small>
-
                   <br />
                   <small className="text-muted">Coupon applied successfully</small>
                 </div>
